@@ -19,36 +19,37 @@ import tkinter as tk
 #OPEN THE SERIAL CONNECTION:
 
 baud_rate=115200
-serial_port='/dev/ttyUSB0'
+
 
 #create a minimalpublisher class which is a subclass of the node class
 class Position(Node):
-    def __init__(self):
+    def __init__(self,serial_port):
         super().__init__('Position') #initialize the node class
         #create a publsiher with a String msg and the topic name "position_info" with 10 of qos
+        self.serial_port = serial_port # Retrieve the parameter's value as a string      
         self.publisher_=self.create_publisher(String, 'position_info',10)
         timer_period=0.5 #the period of time we'll publish the msg
         self.timer=self.create_timer(timer_period,self.timer_callback)
         self.x=0
-        self.ser= serial.Serial(serial_port,baud_rate)
-        time.sleep(2)
+        self.ser= serial.Serial(self.serial_port,baud_rate)
+        self.msg= String()
+        self.msg.data= "X: %d" %self.x
+        time.sleep(1)
         #initialize a counter variable
         self.i=0
-    
     def timer_callback(self):
         #this fuction gets called every 0.5
         if self.i>0:
             self.x=int(self.ser.readline())
-        msg= String() #create a String msg
         #set the message's data
-        msg.data= "X: %d" %self.x
+        self.msg.data= "X: %d" %self.x
 
         #Publish the message to the topic
-        self.publisher_.publish(msg)
+        self.publisher_.publish(self.msg)
 
         #display the msg on the console
 
-        self.get_logger().info('Publishing: "%s" '%msg.data)
+        self.get_logger().info('Publishing: "%s" '%self.msg.data)
 
         #increment the counter by 1
 class GUIApp:
@@ -61,11 +62,9 @@ class GUIApp:
         self.start_button = tk.Button(root, text="Start Serial Communication", command=self.start_serial)
         self.start_button.pack()
 
-        self.stop_button = tk.Button(root, text="Stop Publisher Node", command=self.stop_publisher)
+        self.stop_button = tk.Button(root, text="Stop Comunicating", command=self.stop_publisher)
         self.stop_button.pack()
 
-        self.reboot_button = tk.Button(root, text="Reboot ESP32", command=self.reboot_esp32)
-        self.reboot_button.pack()
 
         self.esp32_label = tk.Label(root, text="ESP32 Value: N/A")
         self.esp32_label.pack()
@@ -78,21 +77,22 @@ class GUIApp:
         time.sleep(2)
 
     def stop_publisher(self):
+        self.position_publisher.ser.close()
+        time.sleep(1)
         pass
-    def reboot_esp32(self):
-        # Reboot the ESP32 (you may need to implement this)
-        # You can call your ESP32 reboot code from here
-        pass
-
-
 
 def main(args=None):
     try:
         #initialize the rclpy library
-        rclpy.init(args=args)
-
-        #Create the node
-        position_publisher=Position()
+        rclpy.init(args=args)        
+          # Retrieve the serial_port parameter value
+        serial_port= '/dev/ttyUSB0'  # Default value  
+        if args:
+           if '--serial_port' in args:
+                arg_index = args.index('--serial_port')  # Find the index of '--serial_port'
+                if arg_index + 1 < len(args):
+                    serial_port = args[arg_index + 1]  # Get the value after '--serial_port'
+        position_publisher=Position(serial_port)
         root = tk.Tk()
         app = GUIApp(root, position_publisher)
         def ros_thread(): #hilo de ros
@@ -109,7 +109,7 @@ def main(args=None):
                 app.publisher_label.config(text=f"Publisher Message: {publisher_msg}")
 
                 root.update()  # Update the Tkinter GUI
-                time.sleep(5)  # Update every 100 milliseconds
+                time.sleep(0.5)  # Update every 100 milliseconds
 
         thread_ros = th.Thread(target=ros_thread)
         thread_labels = th.Thread(target=update_labels)
@@ -126,10 +126,11 @@ def main(args=None):
     except KeyboardInterrupt:
         #shutdown the ROS client library for python
         position_publisher.ser.write("R".encode('utf-8')) #Restart the esp32 to prepare it to start again (once the node is launch again)
-        time.sleep(2) #2 secondes for reset
+        time.sleep(3) #2 secondes for reset
         position_publisher.ser.close() #CLOSE THE SERIAL CONNECTION
         position_publisher.get_logger().info("IT'S DONE!")
         position_publisher.destroy_node()
+        root.destroy()
         rclpy.shutdown()
 
 

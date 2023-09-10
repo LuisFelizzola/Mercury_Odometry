@@ -6,16 +6,17 @@ from launch.substitutions import LaunchConfiguration
 def generate_launch_description():
     ld=LaunchDescription()
 
-    #DeclareLaunchArgument(
-     #   'serial_port',
-      #  default_value='/dev/ttyUSB0',
-       # description='Serial port ESP32'
-    #)
+    DeclareLaunchArgument(
+        'serial_port',
+        default_value='/dev/ttyUSB0',
+        description='Serial port ESP32'
+    )
+
     publisher =Node(
         package="odometry",
         executable="position_publisher",
-        output='screen'
-        #parameters=[{'serial_port' : LaunchConfiguration('serial_port')}]
+        output='screen',
+        parameters=[{'serial_port' : LaunchConfiguration('serial_port')}]
     )
     #subscriber =Node(
      #   package="publisher_subscriber_r",
