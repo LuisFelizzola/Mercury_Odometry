@@ -32,26 +32,28 @@ class Position(Node):
         self.timer=self.create_timer(timer_period,self.timer_callback)
         self.x=0
         self.ser= serial.Serial(self.serial_port,baud_rate)
+        time.sleep(1)
         self.msg= String()
         self.msg.data= "X: %d" %self.x
-        time.sleep(1)
         #initialize a counter variable
         self.i=0
     def timer_callback(self):
         #this fuction gets called every 0.5
-        if self.i>0:
-            self.x=int(self.ser.readline())
-        #set the message's data
+
+            #self.x=int(self.ser.readline())   
+
+  
+            #set the message's data
         self.msg.data= "X: %d" %self.x
 
-        #Publish the message to the topic
+            #Publish the message to the topic
         self.publisher_.publish(self.msg)
 
-        #display the msg on the console
+            #display the msg on the console
 
         self.get_logger().info('Publishing: "%s" '%self.msg.data)
 
-        #increment the counter by 1
+            #increment the counter by 1
 class GUIApp:
     def __init__(self,root,position_publisher) :
         self.root = root
@@ -59,10 +61,10 @@ class GUIApp:
 
         self.position_publisher = position_publisher
 
-        self.start_button = tk.Button(root, text="Start Serial Communication", command=self.start_serial)
+        self.start_button = tk.Button(root, text="Start Serial Communication ", command=self.start_serial)
         self.start_button.pack()
 
-        self.stop_button = tk.Button(root, text="Stop Comunicating", command=self.stop_publisher)
+        self.stop_button = tk.Button(root, text="Stop Comunicating (REBOOT ESP32)", command=self.stop_publisher)
         self.stop_button.pack()
 
 
@@ -72,11 +74,15 @@ class GUIApp:
         self.publisher_label = tk.Label(root, text="Publisher Message: N/A")
         self.publisher_label.pack()   
     def start_serial(self):
+        if self.position_publisher.x==0:
+                self.position_publisher.ser.write("S".encode('utf-8')) #start the communication
+                time.sleep(0.5)
         self.position_publisher.i+=1
-        self.position_publisher.ser.write('S'.encode('utf-8'))
-        time.sleep(2)
 
     def stop_publisher(self):
+        self.position_publisher.i=0
+        self.position_publisher.ser.write("R".encode('utf-8')) #Restart the esp32 to prepare it to start again (once the node is launch again)
+        time.sleep(2)
         self.position_publisher.ser.close()
         time.sleep(1)
         pass
@@ -109,13 +115,23 @@ def main(args=None):
                 app.publisher_label.config(text=f"Publisher Message: {publisher_msg}")
 
                 root.update()  # Update the Tkinter GUI
-                time.sleep(0.5)  # Update every 100 milliseconds
-
+                time.sleep(0.3)  # Update every 100 milliseconds
+        def communication():
+            while True:
+                if position_publisher.x>0 and position_publisher.i>0 and not position_publisher.ser.is_open:
+                    position_publisher.ser=serial.Serial(position_publisher.serial_port,baud_rate)
+                    time.sleep(1)           
+                    position_publisher.ser.write("S".encode('utf-8')) #start the communication
+                    time.sleep(0.5)
+                if position_publisher.ser.is_open and position_publisher.i>0:
+                    position_publisher.x=int(position_publisher.ser.readline())
+                time.sleep(0.5)
         thread_ros = th.Thread(target=ros_thread)
         thread_labels = th.Thread(target=update_labels)
-
+        thread_communication=th.Thread(target=communication)
         thread_ros.start()
         thread_labels.start()
+        thread_communication.start()
 
         root.mainloop()       
         #Spin the node so the call back fuction is called
@@ -125,8 +141,8 @@ def main(args=None):
         #destroy the node explicity
     except KeyboardInterrupt:
         #shutdown the ROS client library for python
-        position_publisher.ser.write("R".encode('utf-8')) #Restart the esp32 to prepare it to start again (once the node is launch again)
-        time.sleep(3) #2 secondes for reset
+        #position_publisher.ser.write("R".encode('utf-8')) #Restart the esp32 to prepare it to start again (once the node is launch again)
+        #time.sleep(2) #2 secondes for reset
         position_publisher.ser.close() #CLOSE THE SERIAL CONNECTION
         position_publisher.get_logger().info("IT'S DONE!")
         position_publisher.destroy_node()
