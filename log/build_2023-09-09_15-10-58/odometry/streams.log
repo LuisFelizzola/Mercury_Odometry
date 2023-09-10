@@ -1,0 +1,17 @@
+[1.346s] Invoking command in '/home/luisf/Mercuryrobot/build/odometry': PYTHONPATH=/home/luisf/Mercuryrobot/build/odometry/prefix_override:/home/luisf/Mercuryrobot/install/odometry/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/luisf/Mercuryrobot/build/odometry/build --no-deps install_data
+[1.786s] running develop
+[2.070s] running egg_info
+[2.070s] writing odometry.egg-info/PKG-INFO
+[2.070s] writing dependency_links to odometry.egg-info/dependency_links.txt
+[2.071s] writing entry points to odometry.egg-info/entry_points.txt
+[2.071s] writing requirements to odometry.egg-info/requires.txt
+[2.071s] writing top-level names to odometry.egg-info/top_level.txt
+[2.128s] reading manifest file 'odometry.egg-info/SOURCES.txt'
+[2.129s] writing manifest file 'odometry.egg-info/SOURCES.txt'
+[2.192s] running build_ext
+[2.193s] Creating /home/luisf/Mercuryrobot/install/odometry/lib/python3.8/site-packages/odometry.egg-link (link to .)
+[2.194s] Installing position script to /home/luisf/Mercuryrobot/install/odometry/lib/odometry
+[2.195s] 
+[2.195s] Installed /home/luisf/Mercuryrobot/build/odometry
+[2.195s] running install_data
+[2.243s] Invoked command in '/home/luisf/Mercuryrobot/build/odometry' returned '0': PYTHONPATH=/home/luisf/Mercuryrobot/build/odometry/prefix_override:/home/luisf/Mercuryrobot/install/odometry/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/luisf/Mercuryrobot/build/odometry/build --no-deps install_data

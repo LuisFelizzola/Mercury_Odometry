@@ -1,0 +1,25 @@
+[1.801s] Invoking command in '/home/luisf/Mercuryrobot/build/odometry': PYTHONPATH=/home/luisf/Mercuryrobot/build/odometry/prefix_override:/home/luisf/Mercuryrobot/install/odometry/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/luisf/Mercuryrobot/build/odometry/build --no-deps install_data
+[2.253s] running develop
+[2.523s] running egg_info
+[2.524s] creating odometry.egg-info
+[2.524s] writing odometry.egg-info/PKG-INFO
+[2.524s] writing dependency_links to odometry.egg-info/dependency_links.txt
+[2.525s] writing entry points to odometry.egg-info/entry_points.txt
+[2.525s] writing requirements to odometry.egg-info/requires.txt
+[2.525s] writing top-level names to odometry.egg-info/top_level.txt
+[2.535s] writing manifest file 'odometry.egg-info/SOURCES.txt'
+[2.596s] reading manifest file 'odometry.egg-info/SOURCES.txt'
+[2.597s] writing manifest file 'odometry.egg-info/SOURCES.txt'
+[2.660s] running build_ext
+[2.674s] Creating /home/luisf/Mercuryrobot/install/odometry/lib/python3.8/site-packages/site.py
+[2.678s] Creating /home/luisf/Mercuryrobot/install/odometry/lib/python3.8/site-packages/odometry.egg-link (link to .)
+[2.679s] Installing position script to /home/luisf/Mercuryrobot/install/odometry/lib/odometry
+[2.680s] 
+[2.680s] Installed /home/luisf/Mercuryrobot/build/odometry
+[2.680s] running install_data
+[2.680s] creating /home/luisf/Mercuryrobot/install/odometry/share/ament_index
+[2.681s] creating /home/luisf/Mercuryrobot/install/odometry/share/ament_index/resource_index
+[2.681s] creating /home/luisf/Mercuryrobot/install/odometry/share/ament_index/resource_index/packages
+[2.681s] copying resource/odometry -> /home/luisf/Mercuryrobot/install/odometry/share/ament_index/resource_index/packages
+[2.681s] copying package.xml -> /home/luisf/Mercuryrobot/install/odometry/share/odometry
+[2.728s] Invoked command in '/home/luisf/Mercuryrobot/build/odometry' returned '0': PYTHONPATH=/home/luisf/Mercuryrobot/build/odometry/prefix_override:/home/luisf/Mercuryrobot/install/odometry/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/luisf/Mercuryrobot/build/odometry/build --no-deps install_data
